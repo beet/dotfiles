@@ -7,11 +7,16 @@
 	[
 		"Babel",
 		"Git",
+		"Marked App Menu",
 		"Package Control",
 		"RSpec",
 		"RubyTest",
+		"Simple JSX",
 		"SqlBeautifier",
+		"SublimeLinter",
+		"SublimeLinter-rubocop",
 		"Theme - Soda SolarizedDark",
+		"TypeScript Syntax",
 		"Visual Studio Dark"
 	]
 }

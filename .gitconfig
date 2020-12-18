@@ -1,12 +1,14 @@
 [user]
 	name = Mark Beattie
 	email = beattie.mark@gmail.com
-	signingkey = D52DFB10832633D8
+	signingkey = 0xD52DFB10832633D8
 [commit]
 	gpgsign = true
+	template = /Users/beet/.stCommitMsg
 
 [core]
     pager = delta
+	excludesfile = /Users/beet/.gitignore_global
 
 [interactive]
     diffFilter = delta --color-only
@@ -20,3 +22,16 @@
     file-style = bold yellow ul
     file-decoration-style = none
 
+[filter "lfs"]
+	clean = git-lfs clean -- %f
+	smudge = git-lfs smudge -- %f
+	process = git-lfs filter-process
+	required = true
+[difftool "sourcetree"]
+	cmd = opendiff \"$LOCAL\" \"$REMOTE\"
+	path = 
+[mergetool "sourcetree"]
+	cmd = /Applications/Sourcetree.app/Contents/Resources/opendiff-w.sh \"$LOCAL\" \"$REMOTE\" -ancestor \"$BASE\" -merge \"$MERGED\"
+	trustExitCode = true
+[pull]
+	rebase = false
