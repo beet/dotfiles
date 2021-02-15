@@ -1,0 +1,102 @@
+wtf:
+  colors:
+    border:
+      focusable: darkslateblue
+      focused: orange
+      normal: gray
+  grid:
+    columns: [22, 22, 22, 22, 22, 22, 22, 22, 22]
+    rows: [6, 6, 6, 6, 6, 6, 6, 6, 6, 6]
+  refreshInterval: 1
+  mods:
+
+    bitcoin-default:
+      border: false
+      cmd: "bitcoin-chart-cli"
+      args: ["--currency", "AUD", "--width", "95"]
+      enabled: true
+      type: "cmdrunner"
+      title: "Default"
+      pty: true
+      position:
+        top: 0
+        left: 0
+        width: 5
+        height: 3
+      refreshInterval: 3600
+
+    bitcoin-30:
+      border: false
+      cmd: "bitcoin-chart-cli"
+      args: ["--currency", "AUD", "--width", "95", "--days", "30"]
+      enabled: true
+      type: "cmdrunner"
+      title: "30 days"
+      pty: true
+      position:
+        top: 0
+        left: 5
+        width: 5
+        height: 3
+      refreshInterval: 3600
+
+    bitcoin-7:
+      border: false
+      cmd: "bitcoin-chart-cli"
+      args: ["--currency", "AUD", "--width", "95", "--days", "7"]
+      enabled: true
+      type: "cmdrunner"
+      title: "7 days"
+      pty: true
+      position:
+        top: 3
+        left: 0
+        width: 5
+        height: 3
+      refreshInterval: 3600
+
+    bitcoin-24:
+      border: false
+      cmd: "bitcoin-chart-cli"
+      args: ["--currency", "AUD", "--width", "95", "--hours", "24"]
+      enabled: true
+      type: "cmdrunner"
+      title: "24 hours"
+      pty: true
+      position:
+        top: 3
+        left: 5
+        width: 5
+        height: 3
+      refreshInterval: 3600
+
+    bitcoin-120:
+      border: false
+      cmd: "bitcoin-chart-cli"
+      args: ["--currency", "AUD", "--width", "95", "--hours", "2"]
+      enabled: true
+      type: "cmdrunner"
+      title: "2 hours"
+      pty: true
+      position:
+        top: 6
+        left: 0
+        width: 5
+        height: 3
+      refreshInterval: 3600
+
+    bitcoin-15:
+      border: false
+      cmd: "bitcoin-chart-cli"
+      args: ["--currency", "AUD", "--width", "95", "--mins", "15"]
+      enabled: true
+      type: "cmdrunner"
+      title: "15 minutes"
+      pty: true
+      position:
+        top: 6
+        left: 5
+        width: 5
+        height: 3
+      refreshInterval: 3600
+
