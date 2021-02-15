@@ -120,7 +120,7 @@ wtf:
         width: 4
       refreshInterval: 60
       repositories:
-        - "/Users/beet/Documents/Projects/marketplacer"
+        - "/Users/beet/Documents/Projects/marketplacer_lfs"
 
 
     pr_status:
@@ -150,7 +150,7 @@ wtf:
 
     docker:
       type: docker
-      enabled: true
+      enabled: false
       labelColor: lightblue
       position:
         top: 5
@@ -166,7 +166,7 @@ wtf:
       refreshInterval: 60
       position:
         top: 5
-        left: 2
+        left: 0
         height: 3
         width: 2
       pipelines:
@@ -186,7 +186,7 @@ wtf:
       formatStyle: "dracula"
       position:
         top: 5
-        left: 4
+        left: 2
         height: 3
         width: 4
       refreshInterval: 60
@@ -201,8 +201,8 @@ wtf:
       pty: true
       position:
         top: 5
-        left: 4
+        left: 2
         height: 3
-        width: 4
+        width: 6
       refreshInterval: 3600
 
