@@ -6,12 +6,15 @@
 	"installed_packages":
 	[
 		"Babel",
+		"Copy Relative Path",
 		"Git",
+		"JSON Reindent",
 		"Marked App Menu",
 		"Package Control",
 		"RSpec",
 		"RubyTest",
 		"Simple JSX",
+		"Smart Path Copy",
 		"SqlBeautifier",
 		"SublimeLinter",
 		"SublimeLinter-rubocop",
