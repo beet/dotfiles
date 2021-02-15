@@ -1,0 +1,20 @@
+#!/bin/bash
+
+<<COMMENT
+Usage:
+
+gaxe -s "locationSearch: typeof defaultLocationSearch" -f webpack/app/consumer/MultiStoreSelector/index.jsx
+COMMENT
+
+while getopts "s:f:" opt; do
+  case ${opt} in
+  s)
+    string=$OPTARG
+    ;;
+  f)
+    file=$OPTARG
+    ;;
+  esac
+done
+
+git log -p -S"$string" -- $file

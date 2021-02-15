@@ -19,7 +19,7 @@ fi
 # chruby
 source /usr/local/opt/chruby/share/chruby/chruby.sh
 source /usr/local/opt/chruby/share/chruby/auto.sh
-chruby 2.6.5 # Set global default
+# chruby 2.6.5 # Set global default
 
 export NVM_DIR="$HOME/.nvm"
 [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
@@ -71,3 +71,6 @@ plugins=(git)
 source $ZSH/oh-my-zsh.sh
 
 export GPG_TTY=`tty`
+
+# Add my scripts from my dotfiles repo to the path
+export PATH=~/Documents/Projects/dotfiles/scripts/git/:$PATH

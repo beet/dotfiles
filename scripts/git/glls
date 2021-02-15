@@ -1,0 +1,19 @@
+#!/bin/bash
+
+<<COMMENT
+Usage:
+
+glls webpack/app/consumer/MultiStoreSelector/index.jsx:40
+COMMENT
+
+IFS=: read -r path line_number <<< "$1"
+
+start_line="$((line_number - 10))"
+if [ $start_line -lt 0 ]
+then
+  start_line=0
+fi
+
+end_line="$((line_number + 10))"
+
+git log -L $start_line,$end_line:$path
