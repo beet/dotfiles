@@ -44,21 +44,29 @@ class NotesSync
   end
 
   def sync_changes
-    %x(
-      cd #{dir}
-      git pull
-      git add .
-      git commit #{commit_messages.join(" ")} -e
-      git push
-    )
+    `#{commands.join(" && ")}`
+  end
+
+  def commands
+    [
+      %(cd "#{dir}"),
+      "git pull",
+      "git add .",
+      "git commit -m $'#{commit_messages.join('\n')}'",
+      "git push",
+    ]
   end
 
   def commit_messages
     [
       "Updated #{changes.size} files at #{Time.now.strftime("%Y-%m-%d %H:%M:%S")}",
       ""
-    ].concat(changes).map do |message|
-      "-m #{message.inspect}"
+    ].concat(sanitised_changes)
+  end
+
+  def sanitised_changes
+    changes.map do |change|
+      change.gsub("'") {"\\'"}
     end
   end
 end
