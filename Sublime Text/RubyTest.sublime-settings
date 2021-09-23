@@ -1,5 +1,5 @@
 {
+  // "check_for_bundler": true,
   "check_for_chruby": true,
-  // "check_for_spring": true,
-  "check_for_bundler": true,
+  "check_for_spring": true,
 }

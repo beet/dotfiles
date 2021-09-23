@@ -12,6 +12,7 @@
 		"Marked App Menu",
 		"Package Control",
 		"RSpec",
+		"RuboCop",
 		"RubyTest",
 		"Simple JSX",
 		"Smart Path Copy",
@@ -20,6 +21,6 @@
 		"SublimeLinter-rubocop",
 		"Theme - Soda SolarizedDark",
 		"TypeScript Syntax",
-		"Visual Studio Dark"
-	]
+		"Visual Studio Dark",
+	],
 }
