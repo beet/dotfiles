@@ -11,12 +11,12 @@ wtf:
   mods:
 
     bitcoin-default:
-      border: false
+      # border: false
       cmd: "bitcoin-chart-cli"
-      args: ["--currency", "AUD", "--width", "95"]
+      args: ["--currency", "AUD", "--width", "95", "-ti", "SMA", "EMA", "BB"]
       enabled: true
       type: "cmdrunner"
-      title: "Default"
+      title: "90 days"
       pty: true
       position:
         top: 0
@@ -26,9 +26,9 @@ wtf:
       refreshInterval: 3600
 
     bitcoin-30:
-      border: false
+      # border: false
       cmd: "bitcoin-chart-cli"
-      args: ["--currency", "AUD", "--width", "95", "--days", "30"]
+      args: ["--currency", "AUD", "--width", "95", "--days", "30", "-ti", "SMA", "EMA"]
       enabled: true
       type: "cmdrunner"
       title: "30 days"
@@ -41,9 +41,9 @@ wtf:
       refreshInterval: 3600
 
     bitcoin-7:
-      border: false
+      # border: false
       cmd: "bitcoin-chart-cli"
-      args: ["--currency", "AUD", "--width", "95", "--days", "7"]
+      args: ["--currency", "AUD", "--width", "95", "--hours", "168", "-ti", "SMA", "EMA", "BB"]
       enabled: true
       type: "cmdrunner"
       title: "7 days"
@@ -56,9 +56,9 @@ wtf:
       refreshInterval: 3600
 
     bitcoin-24:
-      border: false
+      # border: false
       cmd: "bitcoin-chart-cli"
-      args: ["--currency", "AUD", "--width", "95", "--hours", "24"]
+      args: ["--currency", "AUD", "--width", "95", "--mins", "1440", "-ti", "SMA", "EMA"]
       enabled: true
       type: "cmdrunner"
       title: "24 hours"
@@ -71,12 +71,12 @@ wtf:
       refreshInterval: 3600
 
     bitcoin-120:
-      border: false
+      # border: false
       cmd: "bitcoin-chart-cli"
-      args: ["--currency", "AUD", "--width", "95", "--hours", "2"]
+      args: ["--currency", "AUD", "--width", "95", "--mins", "240", "-ti", "SMA", "EMA"]
       enabled: true
       type: "cmdrunner"
-      title: "2 hours"
+      title: "4 hours"
       pty: true
       position:
         top: 6
@@ -86,12 +86,12 @@ wtf:
       refreshInterval: 3600
 
     bitcoin-15:
-      border: false
+      # border: false
       cmd: "bitcoin-chart-cli"
-      args: ["--currency", "AUD", "--width", "95", "--mins", "15"]
+      args: ["--currency", "AUD", "--width", "95", "--mins", "60", "-ti", "SMA", "EMA"]
       enabled: true
       type: "cmdrunner"
-      title: "15 minutes"
+      title: "1 hour"
       pty: true
       position:
         top: 6
