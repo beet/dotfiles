@@ -9,4 +9,5 @@
 	"theme": "Adaptive.sublime-theme",
 	"translate_tabs_to_spaces": true,
 	"color_scheme": "Mariana.sublime-color-scheme",
+	"spell_check": true,
 }
