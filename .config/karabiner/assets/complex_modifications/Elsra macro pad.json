@@ -1,0 +1,454 @@
+{
+  "title": "Elsra macro pad",
+  "rules": [
+    {
+      "description": "Elsra: Switch audio to headphones",
+      "manipulators": [
+        {
+          "type": "basic",
+          "conditions": [
+            {
+              "type": "device_if",
+              "identifiers": [
+                {
+                  "product_id": 512,
+                  "vendor_id": 65535,
+                  "description": "Elsra"
+                }
+              ]
+            }  
+          ],
+          "from": {
+            "key_code": "keypad_7"
+          },
+          "to": [
+            {
+              "key_code": "spacebar",
+              "modifiers": "left_command"
+            },
+            {
+              "key_code": "a"
+            },
+            {
+              "key_code": "s"
+            },
+            {
+              "key_code": "h"
+            },
+            {
+              "key_code": "return_or_enter"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "description": "Elsra: Switch audio to speakers",
+      "manipulators": [
+        {
+          "type": "basic",
+          "conditions": [
+            {
+              "type": "device_if",
+              "identifiers": [
+                {
+                  "product_id": 512,
+                  "vendor_id": 65535,
+                  "description": "Elsra"
+                }
+              ]
+            }  
+          ],
+          "from": {
+            "key_code": "keypad_8"
+          },
+          "to": [
+            {
+              "key_code": "spacebar",
+              "modifiers": "left_command"
+            },
+            {
+              "key_code": "a"
+            },
+            {
+              "key_code": "s"
+            },
+            {
+              "key_code": "p"
+            },
+            {
+              "key_code": "return_or_enter"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "description": "Elsra: Search emoji",
+      "manipulators": [
+        {
+          "type": "basic",
+          "conditions": [
+            {
+              "type": "device_if",
+              "identifiers": [
+                {
+                  "product_id": 512,
+                  "vendor_id": 65535,
+                  "description": "Elsra"
+                }
+              ]
+            }  
+          ],
+          "from": {
+            "key_code": "keypad_9"
+          },
+          "to": [
+            {
+              "key_code": "spacebar",
+              "modifiers": "left_command"
+            },
+            {
+              "key_code": "e"
+            },
+            {
+              "key_code": "m"
+            },
+            {
+              "key_code": "o"
+            },
+            {
+              "key_code": "j"
+            },
+            {
+              "key_code": "i"
+            },
+            {
+              "key_code": "spacebar"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "description": "Elsra: Obsidian checklist icons",
+      "manipulators": [
+        {
+          "type": "basic",
+          "conditions": [
+            {
+              "type": "device_if",
+              "identifiers": [
+                {
+                  "product_id": 512,
+                  "vendor_id": 65535,
+                  "description": "Elsra"
+                }
+              ]
+            }  
+          ],
+          "from": {
+            "key_code": "keypad_hyphen"
+          },
+          "to": [
+            {
+              "key_code": "spacebar",
+              "modifiers": "left_command"
+            },
+            {
+              "key_code": "m"
+            },
+            {
+              "key_code": "c"
+            },
+            {
+              "key_code": "h"
+            },
+            {
+              "key_code": "e"
+            },
+            {
+              "key_code": "c"
+            },
+            {
+              "key_code": "k"
+            },
+            {
+              "key_code": "spacebar"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "description": "Elsra: Copy from desktop",
+      "manipulators": [
+        {
+          "type": "basic",
+          "conditions": [
+            {
+              "type": "device_if",
+              "identifiers": [
+                {
+                  "product_id": 512,
+                  "vendor_id": 65535,
+                  "description": "Elsra"
+                }
+              ]
+            }  
+          ],
+          "from": {
+            "key_code": "keypad_slash"
+          },
+          "to": [
+            {
+              "key_code": "spacebar",
+              "modifiers": "left_command"
+            },
+            {
+              "key_code": "c"
+            },
+            {
+              "key_code": "o"
+            },
+            {
+              "key_code": "p"
+            },
+            {
+              "key_code": "d"
+            },
+            {
+              "key_code": "return_or_enter"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "description": "Elsra: Hook copy Markdown link",
+      "manipulators": [
+        {
+          "type": "basic",
+          "conditions": [
+            {
+              "type": "device_if",
+              "identifiers": [
+                {
+                  "product_id": 512,
+                  "vendor_id": 65535,
+                  "description": "Elsra"
+                }
+              ]
+            }  
+          ],
+          "from": {
+            "key_code": "keypad_asterisk"
+          },
+          "to": [
+            {
+              "key_code": "spacebar",
+              "modifiers": ["left_shift", "left_command"]
+            }
+          ],
+          "to_delayed_action": {
+            "to_if_invoked": [
+              {
+                "key_code": "m",
+                "modifiers": "left_command"
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "description": "Elsra: Move to previous display",
+      "manipulators": [
+        {
+          "type": "basic",
+          "conditions": [
+            {
+              "type": "device_if",
+              "identifiers": [
+                {
+                  "product_id": 512,
+                  "vendor_id": 65535,
+                  "description": "Elsra"
+                }
+              ]
+            }  
+          ],
+          "from": {
+            "key_code": "keypad_4"
+          },
+          "to": [
+            {
+              "key_code": "left_arrow",
+              "modifiers": ["control", "left_alt", "command"]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "description": "Elsra: Move to next display",
+      "manipulators": [
+        {
+          "type": "basic",
+          "conditions": [
+            {
+              "type": "device_if",
+              "identifiers": [
+                {
+                  "product_id": 512,
+                  "vendor_id": 65535,
+                  "description": "Elsra"
+                }
+              ]
+            }  
+          ],
+          "from": {
+            "key_code": "keypad_plus"
+          },
+          "to": [
+            {
+              "key_code": "right_arrow",
+              "modifiers": ["control", "left_alt", "command"]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "description": "Elsra: Move to left side",
+      "manipulators": [
+        {
+          "type": "basic",
+          "conditions": [
+            {
+              "type": "device_if",
+              "identifiers": [
+                {
+                  "product_id": 512,
+                  "vendor_id": 65535,
+                  "description": "Elsra"
+                }
+              ]
+            }  
+          ],
+          "from": {
+            "key_code": "keypad_5"
+          },
+          "to": [
+            {
+              "key_code": "left_arrow",
+              "modifiers": ["control", "left_alt"]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "description": "Elsra: Move to right side",
+      "manipulators": [
+        {
+          "type": "basic",
+          "conditions": [
+            {
+              "type": "device_if",
+              "identifiers": [
+                {
+                  "product_id": 512,
+                  "vendor_id": 65535,
+                  "description": "Elsra"
+                }
+              ]
+            }  
+          ],
+          "from": {
+            "key_code": "keypad_6"
+          },
+          "to": [
+            {
+              "key_code": "right_arrow",
+              "modifiers": ["control", "left_alt"]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "description": "Elsra: Maximise",
+      "manipulators": [
+        {
+          "type": "basic",
+          "conditions": [
+            {
+              "type": "device_if",
+              "identifiers": [
+                {
+                  "product_id": 512,
+                  "vendor_id": 65535,
+                  "description": "Elsra"
+                }
+              ]
+            }  
+          ],
+          "from": {
+            "key_code": "keypad_1"
+          },
+          "to": [
+            {
+              "key_code": "return_or_enter",
+              "modifiers": ["control", "left_alt"]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "description": "Elsra: Open Google Hangouts",
+      "manipulators": [
+        {
+          "type": "basic",
+          "conditions": [
+            {
+              "type": "device_if",
+              "identifiers": [
+                {
+                  "product_id": 512,
+                  "vendor_id": 65535,
+                  "description": "Elsra"
+                }
+              ]
+            }  
+          ],
+          "from": {
+            "key_code": "delete_or_backspace"
+          },
+          "to": [
+            {
+              "key_code": "spacebar",
+              "modifiers": "left_command"
+            },
+            {
+              "key_code": "h"
+            },
+            {
+              "key_code": "a"
+            },
+            {
+              "key_code": "n"
+            },
+            {
+              "key_code": "g"
+            },
+            {
+              "key_code": "return_or_enter"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,261 @@
+{
+  "title": "Macro pad proof of concept",
+  "rules": [
+    {
+      "description": "F9 to Switch audio to headphones",
+      "manipulators": [
+        {
+          "type": "basic",
+          "conditions": [
+            {
+              "type": "device_if",
+              "identifiers": [
+                {
+                  "product_id": 49977,
+                  "vendor_id": 1133,
+                  "description": "Logitech gaming keyboard"
+                }
+              ]
+            }  
+          ],
+          "from": {
+            "key_code": "f9"
+          },
+          "to": [
+            {
+              "key_code": "spacebar",
+              "modifiers": "left_command"
+            },
+            {
+              "key_code": "a"
+            },
+            {
+              "key_code": "s"
+            },
+            {
+              "key_code": "h"
+            },
+            {
+              "key_code": "return_or_enter"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "description": "F10 to Switch audio to speakers",
+      "manipulators": [
+        {
+          "type": "basic",
+          "conditions": [
+            {
+              "type": "device_if",
+              "identifiers": [
+                {
+                  "product_id": 49977,
+                  "vendor_id": 1133,
+                  "description": "Logitech gaming keyboard"
+                }
+              ]
+            }  
+          ],
+          "from": {
+            "key_code": "f10"
+          },
+          "to": [
+            {
+              "key_code": "spacebar",
+              "modifiers": "left_command"
+            },
+            {
+              "key_code": "a"
+            },
+            {
+              "key_code": "s"
+            },
+            {
+              "key_code": "p"
+            },
+            {
+              "key_code": "return_or_enter"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "description": "Print screen to copy from desktop",
+      "manipulators": [
+        {
+          "type": "basic",
+          "conditions": [
+            {
+              "type": "device_if",
+              "identifiers": [
+                {
+                  "product_id": 49977,
+                  "vendor_id": 1133,
+                  "description": "Logitech gaming keyboard"
+                }
+              ]
+            }  
+          ],
+          "from": {
+            "key_code": "print_screen"
+          },
+          "to": [
+            {
+              "key_code": "spacebar",
+              "modifiers": "left_command"
+            },
+            {
+              "key_code": "c"
+            },
+            {
+              "key_code": "o"
+            },
+            {
+              "key_code": "p"
+            },
+            {
+              "key_code": "d"
+            },
+            {
+              "key_code": "return_or_enter"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "description": "Search emoji",
+      "manipulators": [
+        {
+          "type": "basic",
+          "conditions": [
+            {
+              "type": "device_if",
+              "identifiers": [
+                {
+                  "product_id": 49977,
+                  "vendor_id": 1133,
+                  "description": "Logitech gaming keyboard"
+                }
+              ]
+            }  
+          ],
+          "from": {
+            "key_code": "f11"
+          },
+          "to": [
+            {
+              "key_code": "spacebar",
+              "modifiers": "left_command"
+            },
+            {
+              "key_code": "e"
+            },
+            {
+              "key_code": "m"
+            },
+            {
+              "key_code": "o"
+            },
+            {
+              "key_code": "j"
+            },
+            {
+              "key_code": "i"
+            },
+            {
+              "key_code": "spacebar"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "description": "Obsidian checklist icons",
+      "manipulators": [
+        {
+          "type": "basic",
+          "conditions": [
+            {
+              "type": "device_if",
+              "identifiers": [
+                {
+                  "product_id": 49977,
+                  "vendor_id": 1133,
+                  "description": "Logitech gaming keyboard"
+                }
+              ]
+            }  
+          ],
+          "from": {
+            "key_code": "f12"
+          },
+          "to": [
+            {
+              "key_code": "spacebar",
+              "modifiers": "left_command"
+            },
+            {
+              "key_code": "m"
+            },
+            {
+              "key_code": "c"
+            },
+            {
+              "key_code": "h"
+            },
+            {
+              "key_code": "e"
+            },
+            {
+              "key_code": "c"
+            },
+            {
+              "key_code": "k"
+            },
+            {
+              "key_code": "spacebar"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "description": "Hook copy Markdown link",
+      "manipulators": [
+        {
+          "type": "basic",
+          "conditions": [
+            {
+              "type": "device_if",
+              "identifiers": [
+                {
+                  "product_id": 49977,
+                  "vendor_id": 1133,
+                  "description": "Logitech gaming keyboard"
+                }
+              ]
+            }  
+          ],
+          "from": {
+            "key_code": "display_brightness_increment"
+          },
+          "to": [
+            {
+              "key_code": "spacebar",
+              "modifiers": ["left_shift", "left_command"]
+            },
+            {
+              "key_code": "m",
+              "modifiers": "left_command"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
