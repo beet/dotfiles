@@ -37,20 +37,7 @@
                                 },
                                 "to": [
                                     {
-                                        "key_code": "spacebar",
-                                        "modifiers": "left_command"
-                                    },
-                                    {
-                                        "key_code": "a"
-                                    },
-                                    {
-                                        "key_code": "s"
-                                    },
-                                    {
-                                        "key_code": "h"
-                                    },
-                                    {
-                                        "key_code": "return_or_enter"
+                                        "shell_command": "open alfred://runtrigger/com.beet.alfred_audio_switcher/headphones"
                                     }
                                 ],
                                 "type": "basic"
@@ -78,20 +65,7 @@
                                 },
                                 "to": [
                                     {
-                                        "key_code": "spacebar",
-                                        "modifiers": "left_command"
-                                    },
-                                    {
-                                        "key_code": "a"
-                                    },
-                                    {
-                                        "key_code": "s"
-                                    },
-                                    {
-                                        "key_code": "p"
-                                    },
-                                    {
-                                        "key_code": "return_or_enter"
+                                        "shell_command": "open alfred://runtrigger/com.beet.alfred_audio_switcher/speakers"
                                     }
                                 ],
                                 "type": "basic"
@@ -119,26 +93,7 @@
                                 },
                                 "to": [
                                     {
-                                        "key_code": "spacebar",
-                                        "modifiers": "left_command"
-                                    },
-                                    {
-                                        "key_code": "e"
-                                    },
-                                    {
-                                        "key_code": "m"
-                                    },
-                                    {
-                                        "key_code": "o"
-                                    },
-                                    {
-                                        "key_code": "j"
-                                    },
-                                    {
-                                        "key_code": "i"
-                                    },
-                                    {
-                                        "key_code": "spacebar"
+                                        "shell_command": "open alfred://runtrigger/com.github.jsumners.alfred-emoji/search"
                                     }
                                 ],
                                 "type": "basic"
@@ -166,29 +121,7 @@
                                 },
                                 "to": [
                                     {
-                                        "key_code": "spacebar",
-                                        "modifiers": "left_command"
-                                    },
-                                    {
-                                        "key_code": "m"
-                                    },
-                                    {
-                                        "key_code": "c"
-                                    },
-                                    {
-                                        "key_code": "h"
-                                    },
-                                    {
-                                        "key_code": "e"
-                                    },
-                                    {
-                                        "key_code": "c"
-                                    },
-                                    {
-                                        "key_code": "k"
-                                    },
-                                    {
-                                        "key_code": "spacebar"
+                                        "shell_command": "open alfred://runtrigger/com.beet.alfred_obsidian_minimal_theme_checklist_icons/search"
                                     }
                                 ],
                                 "type": "basic"
@@ -216,23 +149,7 @@
                                 },
                                 "to": [
                                     {
-                                        "key_code": "spacebar",
-                                        "modifiers": "left_command"
-                                    },
-                                    {
-                                        "key_code": "c"
-                                    },
-                                    {
-                                        "key_code": "o"
-                                    },
-                                    {
-                                        "key_code": "p"
-                                    },
-                                    {
-                                        "key_code": "d"
-                                    },
-                                    {
-                                        "key_code": "return_or_enter"
+                                        "shell_command": "open alfred://runtrigger/com.mark.beattie.desktop_tools/copy"
                                     }
                                 ],
                                 "type": "basic"
@@ -260,21 +177,14 @@
                                 },
                                 "to": [
                                     {
-                                        "key_code": "spacebar",
+                                        "key_code": "m",
                                         "modifiers": [
+                                            "left_control",
                                             "left_shift",
                                             "left_command"
                                         ]
                                     }
                                 ],
-                                "to_delayed_action": {
-                                    "to_if_invoked": [
-                                        {
-                                            "key_code": "m",
-                                            "modifiers": "left_command"
-                                        }
-                                    ]
-                                },
                                 "type": "basic"
                             }
                         ]
@@ -430,23 +340,7 @@
                                 },
                                 "to": [
                                     {
-                                        "key_code": "spacebar",
-                                        "modifiers": "left_command"
-                                    },
-                                    {
-                                        "key_code": "h"
-                                    },
-                                    {
-                                        "key_code": "a"
-                                    },
-                                    {
-                                        "key_code": "n"
-                                    },
-                                    {
-                                        "key_code": "g"
-                                    },
-                                    {
-                                        "key_code": "return_or_enter"
+                                        "shell_command": "open alfred://runtrigger/com.beet.handy_stuff/hangouts"
                                     }
                                 ],
                                 "type": "basic"
