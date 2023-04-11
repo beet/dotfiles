@@ -1,0 +1,26 @@
+wtf:
+  colors:
+    border:
+      focusable: darkslateblue
+      focused: orange
+      normal: gray
+  grid:
+    columns: [27, 27, 27, 27, 27, 27, 27, 27]
+    rows: [9, 8, 8, 8, 8, 8, 8, 8]
+  refreshInterval: 1
+  mods:
+    datadog:
+      apiKey: "f85734235c86046b2afcde3e97abfe74"
+      applicationKey: "dac0a7f81fa0c3a4a48e79d3632a8ed59884f9db"
+      enabled: true
+      monitors:
+        tags:
+          # - "dbinstanceidentifier:integrations-production-postgres-main"
+          - "env:production"
+          - "integrations:db"
+      position:
+        top: 1
+        left: 1
+        height: 2
+        width: 4
+

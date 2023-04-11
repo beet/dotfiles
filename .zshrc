@@ -1,4 +1,4 @@
-eval "$(rbenv init -)"
+# eval "$(rbenv init -)"
 
 if type brew &>/dev/null; then
   FPATH=$(brew --prefix)/share/zsh-completions:$FPATH
@@ -7,31 +7,29 @@ if type brew &>/dev/null; then
   compinit
 fi
 
-# Git branch in prompt
-# autoload -Uz vcs_info
-# precmd_vcs_info() { vcs_info }
-# precmd_functions+=( precmd_vcs_info )
-# setopt prompt_subst
-# RPROMPT=\$vcs_info_msg_0_
-# # PROMPT=\$vcs_info_msg_0_'%# '
-# zstyle ':vcs_info:git:*' formats '%b'
 
 # chruby
 source /usr/local/opt/chruby/share/chruby/chruby.sh
 source /usr/local/opt/chruby/share/chruby/auto.sh
 # chruby 2.6.5 # Set global default
 
+
+# 2021-09-29: Where did this NVM stuff come from? Seems to be a requirement for
+# specs to run.
+# It's from the Placer app dependencies, required for the front-end to work.
 export NVM_DIR="$HOME/.nvm"
 [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
 [ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"  # This loads nvm bash_completion
 
-source /Users/beet/.config/broot/launcher/bash/br
+
+# source /Users/beet/.config/broot/launcher/bash/br
 
 
 # Oh My Zsh!
 export ZSH="/Users/beet/.oh-my-zsh"
 
-ZSH_THEME="fino-time"
+# ZSH_THEME="fino-time"
+ZSH_THEME="candy"
 
 # Uncomment the following line if pasting URLs and other text is messed up.
 # DISABLE_MAGIC_FUNCTIONS="true"
@@ -71,6 +69,7 @@ plugins=(git)
 source $ZSH/oh-my-zsh.sh
 
 export GPG_TTY=`tty`
+
 
 # Add my scripts from my dotfiles repo to the path
 export PATH=~/Documents/Projects/dotfiles/scripts/git/:$PATH

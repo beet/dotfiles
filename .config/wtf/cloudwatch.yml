@@ -1,0 +1,66 @@
+wtf:
+  colors:
+    border:
+      focusable: darkslateblue
+      focused: orange
+      normal: gray
+  grid:
+    columns: [180, 180]
+    rows: [50, 50]
+  mods:
+    top_left:
+      type: "cmdrunner"
+      title: "Sidekiq 1"
+      # pty: true
+      tail: true
+      cmd: "aws-vault"
+      args: ["exec", "marketplacer", "--", "awslogs", "get", "/ecs/service/integrations-production-sidekiq-v2", "--no-group", "--no-stream", "--start", "1m"]
+      enabled: true
+      position:
+        top: 0
+        left: 0
+        height: 1
+        width: 1
+      refreshInterval: 3
+    top_right:
+      type: "cmdrunner"
+      title: "Sidekiq 2"
+      # pty: true
+      tail: true
+      cmd: "aws-vault"
+      args: ["exec", "marketplacer", "--", "awslogs", "get", "/ecs/service/integrations-production-sidekiq-fetcher", "--no-group", "--no-stream", "--start", "1m"]
+      enabled: true
+      position:
+        top: 0
+        left: 1
+        height: 1
+        width: 1
+      refreshInterval: 3
+    bottom_left:
+      type: "cmdrunner"
+      title: "Sidekiq 3"
+      # pty: true
+      tail: true
+      cmd: "aws-vault"
+      args: ["exec", "marketplacer", "--", "awslogs", "get", "/ecs/service/integrations-production-sidekiq-uploader", "--no-group", "--no-stream", "--start", "1m"]
+      enabled: true
+      position:
+        top: 1
+        left: 0
+        height: 1
+        width: 1
+      refreshInterval: 3
+    bottom_right:
+      type: "cmdrunner"
+      title: "Web"
+      # pty: true
+      tail: true
+      cmd: "aws-vault"
+      args: ["exec", "marketplacer", "--", "awslogs", "get", "/ecs/service/integrations-production-web", "--no-group", "--no-stream", "--start", "1m"]
+      enabled: true
+      position:
+        top: 1
+        left: 1
+        height: 1
+        width: 1
+      refreshInterval: 3

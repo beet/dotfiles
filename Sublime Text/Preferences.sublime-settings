@@ -8,6 +8,6 @@
 	"tab_size": 2,
 	"theme": "Adaptive.sublime-theme",
 	"translate_tabs_to_spaces": true,
-	"color_scheme": "Mariana.sublime-color-scheme",
+	"color_scheme": "Packages/Colorsublime - Themes/rose-pine.tmTheme",
 	"spell_check": true,
 }

@@ -32,12 +32,12 @@ wtf:
       enabled: true
       locations:
         # From https://en.wikipedia.org/wiki/List_of_tz_database_time_zones
-        - New Zealand: "Pacific/Auckland"
-        - Germany: "Europe/Berlin"
+        # - New Zealand: "Pacific/Auckland"
+        # - Germany: "Europe/Berlin"
         - San Fran: "US/Pacific"
         - Osaka: "Asia/Tokyo"
         - Sydney: "Australia/Sydney"
-        - UTC: "Etc/UTC"
+        # - UTC: "Etc/UTC"
       position:
         top: 1
         left: 0
@@ -170,6 +170,9 @@ wtf:
         height: 3
         width: 2
       pipelines:
+        integrations:
+          branches:
+            - "main"
         marketplacer:
           branches:
             - "main"

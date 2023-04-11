@@ -33,7 +33,7 @@ windows:
                 - cwd: /Users/beet/Documents/Projects/integrations
                   commands:
                     - exec: spring rake cloudwatch:login
-                    - exec: spring rake cloudwatch:tail_sidekiq -- --stats-mode=true --verbose=true --sound=false --environment=production --info-logging=false
+                    - exec: spring rake cloudwatch:tail_sidekiq -- --stats-mode=true --verbose=true --sound=false --environment=production --info-logging=false --search="==>"
                 - cwd: /Users/beet/Documents/Projects/integrations
                   commands:
                     - exec: sampler -c config/sampler/cloudwatch_totals.yml
