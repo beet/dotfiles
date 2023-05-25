@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+  <key>Label</key>
+  <string>com.beet.noteplan-sync</string>
+
+  <key>ProgramArguments</key>
+  <array>
+    <!-- This works: -->
+    <!--
+    <string>/Users/beet/.rubies/ruby-3.0.0/bin/ruby</string>
+    <string>/Users/beet/Documents/Projects/dotfiles/scripts/git/test.rb</string>
+    -->
+
+    <!-- This works, but not if the script is symlinked: -->
+    <!--
+    <string>/usr/bin/ruby</string>
+    <string>/usr/local/bin/test.rb</string>
+    -->
+
+    <string>/usr/bin/ruby</string>
+    <string>/usr/local/bin/notes_sync.rb</string>
+    <string>--dir="/Users/beet/Library/Containers/co.noteplan.NotePlan3/Data/Library/Application\ Support/co.noteplan.NotePlan3"</string>
+    
+
+    <!--
+    <string>/usr/bin/env</string>
+    <string>ruby</string>
+    <string>~/Documents/Projects/dotfiles/scripts/git/notes_sync.rb</string>
+    <string>--dir="/Users/beet/Library/Containers/co.noteplan.NotePlan3/Data/Library/Application Support/co.noteplan.NotePlan3"</string>
+    -->
+
+    <!-- <string>/Users/beet/Documents/Projects/dotfiles/scripts/git/notes_sync.rb</string>
+    <string>--dir</string>
+    <string>/Users/beet/Library/Containers/co.noteplan.NotePlan3/Data/Library/Application Support/co.noteplan.NotePlan3</string> -->
+
+    <!-- <string>/Users/beet/Documents/Projects/dotfiles/scripts/git/test.sh</string> -->
+  </array>
+
+  <!-- <key>WorkingDirectory</key>
+  <string>~/Library/Containers/co.noteplan.NotePlan3/Data/Library/Application Support/co.noteplan.NotePlan3"</string> -->
+
+  <key>StartInterval</key>
+  <integer>30</integer>
+
+  <key>RunAtLoad</key>
+  <true/>
+
+  <key>StandardErrorPath</key>
+  <string>/tmp/notes_sync_noteplan.err</string>
+
+  <key>StandardOutPath</key>
+  <string>/tmp/notes_sync_noteplan.out</string>
+</dict>
+</plist>

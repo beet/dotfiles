@@ -73,3 +73,5 @@ export GPG_TTY=`tty`
 
 # Add my scripts from my dotfiles repo to the path
 export PATH=~/Documents/Projects/dotfiles/scripts/git/:$PATH
+
+eval $(thefuck --alias)
