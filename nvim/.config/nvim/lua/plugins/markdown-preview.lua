@@ -1,12 +1,11 @@
 return {
-  "iamcco/markdown-preview.nvim",
-  cmd = { "MarkdownPreviewToggle", "MarkdownPreview", "MarkdownPreviewStop" },
-  ft = { "markdown" },
-  -- build = function()
-  --   vim.fn["mkdp#util#install"]()
-  -- end,
-  build = "cd app && yarn install",
-  init = function()
-    vim.g.mkdp_filetypes = { "markdown" }
-  end,
+  "brianhuster/live-preview.nvim",
+  dependencies = {
+    -- You can choose one of the following pickers
+    "nvim-telescope/telescope.nvim",
+    -- 'ibhagwan/fzf-lua',
+    -- 'echasnovski/mini.pick',
+    -- 'folke/snacks.nvim',
+  },
+  dynamic_root = true,
 }
