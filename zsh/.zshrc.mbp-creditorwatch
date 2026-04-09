@@ -1,0 +1,19 @@
+export PATH="/opt/homebrew/opt/libpq/bin:$PATH"
+export PATH="/Users/markbeattie/bin:$PATH"
+
+# PSQL exceptions from Spring: https://stackoverflow.com/questions/59371964/cant-perform-query-in-rails-may-have-been-in-progress-in-another-thread-when-f
+export OBJC_DISABLE_INITIALIZE_FORK_SAFETY="YES"
+export PGGSSENCMODE="disable"
+
+# Claude Code (work proxy)
+export ANTHROPIC_BASE_URL=https://llm-proxy.cwhq.io/
+export ANTHROPIC_DEFAULT_OPUS_MODEL='anthropic.claude-opus-4-6-v1'
+export ANTHROPIC_DEFAULT_SONNET_MODEL='anthropic.claude-sonnet-4-6'
+export ANTHROPIC_DEFAULT_HAIKU_MODEL='anthropic.claude-haiku-4-5-20251001-v1:0'
+
+# pnpm
+export PNPM_HOME="/Users/markbeattie/Library/pnpm"
+case ":$PATH:" in
+  *":$PNPM_HOME:"*) ;;
+  *) export PATH="$PNPM_HOME:$PATH" ;;
+esac
