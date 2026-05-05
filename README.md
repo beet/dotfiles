@@ -4,6 +4,7 @@ See [How To Easily Manage Your Dotfiles With GNU Stow](https://www.josean.com/po
 
 Main directories:
 
+* `bin` - my shell scripts
 * `btop` - my [btop](https://github.com/aristocratos/btop) config
 * `nvim` - my [LazyVim](https://www.lazyvim.org) config
 * `wezterm` - my [WezTerm](https://wezterm.org/) config 
