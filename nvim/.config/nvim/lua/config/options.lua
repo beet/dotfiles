@@ -8,6 +8,8 @@ vim.g.snacks_animate = false
 
 vim.opt.relativenumber = false
 
+vim.o.winborder = "rounded"
+
 -- Code folding with treesitter
 vim.opt.foldmethod = "expr"
 vim.opt.foldexpr = "v:lua.vim.treesitter.foldexpr()"
