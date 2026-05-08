@@ -14,3 +14,9 @@
 ;   file-style = bold yellow ul
 ;   file-decoration-style = none
 ;
+
+; Machine-specific config lives in .gitconfig.local, also in this repo
+; (gitignored). Git can't expand env vars in include paths, so each machine
+; uses the same fixed filename for its own overrides.
+[include]
+	path = ~/.gitconfig.local
