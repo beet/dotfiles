@@ -107,6 +107,9 @@ source $ZSH/oh-my-zsh.sh
 # Preferred editor for local and remote sessions
 export EDITOR='nvim'
 
+# Shorter Zellij socket paths
+export ZELLIJ_SOCKET_DIR="/tmp/zellij-$UID"
+
 # Compilation flags
 # export ARCHFLAGS="-arch $(uname -m)"
 
