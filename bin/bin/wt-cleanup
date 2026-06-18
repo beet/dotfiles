@@ -1,10 +1,32 @@
 #!/usr/bin/env bash
 # wt-cleanup — remove a merged feature worktree, branch, and Zellij session.
-# Run from inside the worktree to be cleaned up. Optional arg: target branch
-# (default: develop).
+# * Run from inside the worktree to be cleaned up.
+# * Options: --branch <name> (default: develop), --force (skip safety guards).
+# * Will exit Zellij on completion
 set -euo pipefail
 
-target_branch=${1:-develop}
+target_branch=develop
+force=0
+while [[ $# -gt 0 ]]; do
+  case $1 in
+  --branch)
+    target_branch=$2
+    shift 2
+    ;;
+  --branch=*)
+    target_branch=${1#*=}
+    shift
+    ;;
+  --force)
+    force=1
+    shift
+    ;;
+  *)
+    echo "unknown arg: $1" >&2
+    exit 1
+    ;;
+  esac
+done
 
 git rev-parse --is-inside-work-tree >/dev/null
 
@@ -14,29 +36,45 @@ session=${ZELLIJ_SESSION_NAME:-}
 main_repo=$(git worktree list --porcelain | awk '/^worktree /{print $2; exit}')
 
 if [[ "$worktree_path" == "$main_repo" ]]; then
-  echo "refusing to clean the main worktree ($worktree_path)" >&2
+  echo "Refusing to clean the main worktree ($worktree_path)" >&2
   exit 1
 fi
 
 if [[ -n "$(git status --porcelain)" ]]; then
-  echo "working tree has uncommitted changes" >&2
-  exit 1
+  if ((force)); then
+    echo "Warning: working tree has uncommitted changes:"
+    git status --short
+    echo ""
+  else
+    echo "Working tree has uncommitted changes" >&2
+    exit 1
+  fi
 fi
 
 git fetch origin "$target_branch" --quiet
 if ! git merge-base --is-ancestor HEAD "origin/$target_branch"; then
-  echo "$branch is not merged into origin/$target_branch" >&2
-  exit 1
+  if ((force)); then
+    ahead=$(git rev-list --count "origin/$target_branch..HEAD")
+    echo "Warning: $branch is not merged into origin/$target_branch ($ahead commit(s) ahead)"
+    echo ""
+  else
+    echo "$branch is not merged into origin/$target_branch" >&2
+    exit 1
+  fi
 fi
 
-echo "worktree: $worktree_path"
-echo "branch:   $branch"
-[[ -n "$session" ]] && echo "session:  $session"
-read -rp "proceed? [y/N] " ok
+echo ""
+echo "Worktree: $worktree_path"
+echo "Branch:   $branch"
+[[ -n "$session" ]] && echo "Session:  $session"
+echo ""
+
+read -rp "Proceed? [y/N] " ok
 [[ "$ok" =~ ^[Yy]$ ]] || exit 0
 
 cd "$main_repo"
-git worktree remove "$worktree_path"
+worktree_flags=()
+(( force )) && worktree_flags=(--force)
+git worktree remove "${worktree_flags[@]}" "$worktree_path"
 git branch -D "$branch"
 [[ -n "$session" ]] && zellij delete-session --force "$session"
-
