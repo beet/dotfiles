@@ -7,6 +7,7 @@ Main directories:
 * `bin` - my shell scripts
 * `btop` - my [btop](https://github.com/aristocratos/btop) config
 * `git` - my [Git](https://git-scm.com/) config
+* `hunk` - my [Hunk](https://github.com/modem-dev/hunk) config
 * `nvim` - my [LazyVim](https://www.lazyvim.org) config
 * `wezterm` - my [WezTerm](https://wezterm.org/) config 
 * `yazi` - my [Yazi](https://yazi-rs.github.io/) config
