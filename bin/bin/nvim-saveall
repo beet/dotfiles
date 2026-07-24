@@ -1,0 +1,30 @@
+#!/usr/bin/env bash
+# nvim-saveall — write all buffers in every running Neovim instance.
+#
+# Neovim auto-starts an RPC server per instance and drops a socket under its
+# runtime dir. This loops over those sockets and runs `:wall` in each, so you
+# can flush everything to disk before a reboot without visiting each window.
+#
+# Saves only — it won't quit. Buffers that can't be written (no name,
+# read-only) are skipped silently. Works in bash and zsh.
+
+command -v nvim >/dev/null 2>&1 || {
+  echo "nvim-saveall: nvim not found" >&2
+  exit 1
+}
+
+rundir=$(nvim --headless -c 'lua io.write(vim.fn.stdpath("run"))' +q 2>/dev/null)
+rundir=$(dirname "$rundir")
+[ -d "$rundir" ] || {
+  echo "nvim-saveall: runtime dir not found" >&2
+  exit 1
+}
+
+count=0
+while IFS= read -r sock; do
+  [ -S "$sock" ] || continue
+  nvim --server "$sock" --remote-expr 'execute("silent! wall")' >/dev/null 2>&1 &&
+    count=$((count + 1))
+done < <(find "$rundir" -type s -name 'nvim.*' 2>/dev/null)
+
+echo "nvim-saveall: wrote buffers in $count instance(s)"
