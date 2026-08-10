@@ -38,4 +38,9 @@ config.keys = {
 -- 	format = "$0",
 -- })
 
+-- GPU rendering performance fixes
+config.max_fps = 60
+config.animation_fps = 1
+config.front_end = "Software" -- Options: OpenGL, WebGpu (Metal), Software (no GPU)
+
 return config
