@@ -30,9 +30,50 @@ done
 
 git rev-parse --is-inside-work-tree >/dev/null
 
+# Resolve the current Zellij session name.
+#
+# ZELLIJ_SESSION_NAME is snapshotted into a pane's environment when the pane is
+# created, so it goes stale once the session is renamed -- and `zellij
+# list-sessions` derives its "(current)" marker from that same stale value, so
+# it is no help either. Instead, find the `zellij --server <socket>` ancestor of
+# this script and match it to its socket file: a rename moves the file but
+# preserves the mtime, which equals the server's start time.
+current_session() {
+  local pid=$$ ppid cmd socket= started f
+  local -a matches=()
+
+  while [[ -n $pid && $pid -gt 1 ]]; do
+    ppid= cmd=
+    read -r ppid cmd < <(ps -o ppid=,command= -p "$pid" 2>/dev/null) || true
+    # A vanished process leaves ppid empty; bail rather than re-walk the same pid.
+    [[ -n $ppid ]] || return 0
+    if [[ $cmd == *"zellij --server "* ]]; then
+      socket=${cmd#*--server }
+      break
+    fi
+    pid=$ppid
+  done
+  [[ -n $socket ]] || return 0
+
+  started=$(LC_ALL=C date -j -f "%a %b %e %H:%M:%S %Y" \
+    "$(LC_ALL=C ps -o lstart= -p "$pid")" +%s 2>/dev/null) || return 0
+
+  for f in "$(dirname "$socket")"/*; do
+    if [[ -S $f && $(stat -f %m "$f" 2>/dev/null) == "$started" ]]; then
+      matches+=("$f")
+    fi
+  done
+
+  # Only trust an unambiguous match -- deleting the wrong session is unrecoverable.
+  if ((${#matches[@]} == 1)); then
+    basename "${matches[0]}"
+  fi
+  return 0
+}
+
 worktree_path=$(git rev-parse --show-toplevel)
 branch=$(git branch --show-current)
-session=${ZELLIJ_SESSION_NAME:-}
+session=$(current_session)
 main_repo=$(git worktree list --porcelain | awk '/^worktree /{print $2; exit}')
 
 if [[ "$worktree_path" == "$main_repo" ]]; then
