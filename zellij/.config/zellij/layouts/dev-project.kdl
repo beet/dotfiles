@@ -1,0 +1,43 @@
+layout {
+  // Applied to every tab: tab-bar across the top, status-bar across the bottom.
+  // `children` is where each tab's own panes get slotted in.
+  default_tab_template {
+    pane size=1 borderless=true {
+      plugin location="zellij:tab-bar"
+    }
+    children
+    pane size=1 borderless=true {
+      plugin location="zellij:status-bar"
+    }
+  }
+
+  // Editor — starts immediately.
+  tab name="nvim" {
+    pane command="nvim"
+  }
+
+  // Git TUI — starts immediately.
+  tab name="GitUI" {
+    pane command="gitui"
+  }
+
+  // Live diff viewer — waits for Enter to start (drop `start_suspended` to auto-run).
+  tab name="Hunk" {
+    pane command="hunk" {
+      args "diff" "--watch"
+    }
+  }
+
+  // Rails server
+  tab name="Rails" focus=true {
+    pane command="bin/rails" {
+      args "server"
+      start_suspended true
+    }
+  }
+
+  // Scratch shell.
+  tab name="Terminal" {
+    pane
+  }
+}
