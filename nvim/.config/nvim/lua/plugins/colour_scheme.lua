@@ -1,7 +1,3 @@
-if true then
-  return {}
-end
-
 return {
   -- add gruvbox
   { "ellisonleao/gruvbox.nvim" },
@@ -14,3 +10,13 @@ return {
     },
   },
 }
+
+-- return {
+--   { "Shatur/neovim-ayu" },
+--   {
+--     "LazyVim/LazyVim",
+--     opts = {
+--       colorscheme = "ayu-mirage",
+--     },
+--   },
+-- }

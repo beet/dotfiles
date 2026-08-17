@@ -14,6 +14,12 @@ return {
       adapters = {
         require("neotest-rspec"),
       },
+      -- Project-wide discovery scans/parses every spec file in the repo, which on
+      -- labmaster pegged the CPU and ballooned RAM. Tests are still found in files
+      -- you open or run explicitly.
+      discovery = {
+        enabled = false,
+      },
     })
   end,
 

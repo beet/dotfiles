@@ -10,6 +10,9 @@ vim.opt.relativenumber = false
 
 vim.o.winborder = "rounded"
 
--- Code folding with treesitter
-vim.opt.foldmethod = "expr"
-vim.opt.foldexpr = "v:lua.vim.treesitter.foldexpr()"
+-- Folding is left to LazyVim, which already sets foldmethod=expr with its own
+-- guarded foldexpr (require'lazyvim.util'.ui.foldexpr()). That version returns
+-- early for buffers with no active treesitter parser, so it skips the parse cost
+-- on large/non-code buffers. The raw vim.treesitter.foldexpr() override that was
+-- here dropped that guard, making every buffer open/close recompute folds -- a
+-- CPU spike on exactly those events.
