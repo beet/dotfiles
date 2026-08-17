@@ -2,10 +2,16 @@ local wezterm = require("wezterm")
 local config = wezterm.config_builder()
 -- local action = wezterm.action
 
+-- Colour scheme:
 -- config.color_scheme = "Ayu Mirage"
-config.color_scheme = "Tokyo Night Moon"
-config.font = wezterm.font("Menlo")
-config.font_size = 12
+config.color_scheme = "Gruvbox Dark (Gogh)"
+-- config.color_scheme = "Tokyo Night Moon"
+
+-- Font:
+-- config.font = wezterm.font("Menlo")
+config.font = wezterm.font("JetBrains Mono")
+-- config.font = wezterm.font("Andale Mono")
+config.font_size = 15
 
 -- Tabs and windows:
 config.use_fancy_tab_bar = false
