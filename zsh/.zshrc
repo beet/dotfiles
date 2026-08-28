@@ -92,8 +92,11 @@ plugins=(
   git
 )
 
+# Homebrew prefix differs per machine (/opt/homebrew, /usr/local, linuxbrew)
+BREW_PREFIX="$(brew --prefix)"
+
 # https://github.com/jeffreytse/zsh-vi-mode
-source $(brew --prefix)/opt/zsh-vi-mode/share/zsh-vi-mode/zsh-vi-mode.plugin.zsh
+source $BREW_PREFIX/opt/zsh-vi-mode/share/zsh-vi-mode/zsh-vi-mode.plugin.zsh
 
 source $ZSH/oh-my-zsh.sh
 
@@ -125,7 +128,7 @@ export ZELLIJ_SOCKET_DIR="/tmp/zellij-$UID"
 # alias zshconfig="mate ~/.zshrc"
 # alias ohmyzsh="mate ~/.oh-my-zsh"
 
-source /opt/homebrew/share/zsh-autosuggestions/zsh-autosuggestions.zsh
+source $BREW_PREFIX/share/zsh-autosuggestions/zsh-autosuggestions.zsh
 
 # Absorb terminal focus-in/out reports (ESC[I / ESC[O) so they don't leak
 # stray I/O characters into the prompt over nested zellij+ssh sessions.
