@@ -129,10 +129,17 @@ source /opt/homebrew/share/zsh-autosuggestions/zsh-autosuggestions.zsh
 
 # Absorb terminal focus-in/out reports (ESC[I / ESC[O) so they don't leak
 # stray I/O characters into the prompt over nested zellij+ssh sessions.
+# Must run from zvm_after_init: zsh-vi-mode resets keymaps on first prompt,
+# which would clobber these if bound directly here.
 _zle_noop() {}
 zle -N _zle_noop
-bindkey '^[[I' _zle_noop
-bindkey '^[[O' _zle_noop
+function zvm_after_init() {
+  local keymap
+  for keymap in viins vicmd; do
+    bindkey -M $keymap '^[[I' _zle_noop
+    bindkey -M $keymap '^[[O' _zle_noop
+  done
+}
 
 # Machine-specific config
 [[ -n "$DOTFILES_HOST" && -f ~/.zshrc.$DOTFILES_HOST ]] && source ~/.zshrc.$DOTFILES_HOST
