@@ -12,7 +12,7 @@ layout {
   }
 
   // Editor — starts immediately.
-  tab name="nvim" {
+  tab name="nvim" focus=true {
     pane command="nvim"
   }
 
@@ -29,7 +29,7 @@ layout {
   }
 
   // Rails server
-  tab name="Rails" focus=true {
+  tab name="Rails" {
     pane command="bin/rails" {
       args "server"
       start_suspended true
