@@ -127,6 +127,13 @@ export ZELLIJ_SOCKET_DIR="/tmp/zellij-$UID"
 
 source /opt/homebrew/share/zsh-autosuggestions/zsh-autosuggestions.zsh
 
+# Absorb terminal focus-in/out reports (ESC[I / ESC[O) so they don't leak
+# stray I/O characters into the prompt over nested zellij+ssh sessions.
+_zle_noop() {}
+zle -N _zle_noop
+bindkey '^[[I' _zle_noop
+bindkey '^[[O' _zle_noop
+
 # Machine-specific config
 [[ -n "$DOTFILES_HOST" && -f ~/.zshrc.$DOTFILES_HOST ]] && source ~/.zshrc.$DOTFILES_HOST
 
