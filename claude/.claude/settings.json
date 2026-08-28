@@ -1,4 +1,42 @@
 {
-  "skipWorkflowUsageWarning": true,
-  "outputStyle": "Concise"
+  "hooks": {
+    "Notification": [
+      {
+        "hooks": [
+          {
+            "command": "/opt/homebrew/bin/agentmon-report",
+            "type": "command"
+          }
+        ],
+        "matcher": "permission_prompt|idle_prompt|elicitation_dialog|elicitation_url_dialog|agent_needs_input"
+      }
+    ],
+    "Stop": [
+      {
+        "hooks": [
+          {
+            "command": "/opt/homebrew/bin/agentmon-report",
+            "type": "command"
+          }
+        ],
+        "matcher": ""
+      }
+    ],
+    "UserPromptSubmit": [
+      {
+        "hooks": [
+          {
+            "command": "/opt/homebrew/bin/agentmon-report",
+            "type": "command"
+          }
+        ],
+        "matcher": ""
+      }
+    ]
+  },
+  "outputStyle": "Concise",
+  "permissions": {
+    "defaultMode": "default"
+  },
+  "skipWorkflowUsageWarning": true
 }
