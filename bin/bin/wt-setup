@@ -1,0 +1,169 @@
+#!/usr/bin/env bash
+# wt-setup — prepare a freshly branched Rails worktree for development.
+# * Run from inside the new worktree.
+# * Seeds .env.local from the main worktree, pins DEV_DATABASE_NAME to a
+#   per-ticket database, builds assets, and bootstraps the database.
+# * Options: --ticket <key>, --db <name>, --skip-assets, --skip-db, --force.
+set -euo pipefail
+
+ticket=
+db_name=
+skip_assets=0
+skip_db=0
+force=0
+while [[ $# -gt 0 ]]; do
+  case $1 in
+  --ticket)
+    ticket=$2
+    shift 2
+    ;;
+  --ticket=*)
+    ticket=${1#*=}
+    shift
+    ;;
+  --db)
+    db_name=$2
+    shift 2
+    ;;
+  --db=*)
+    db_name=${1#*=}
+    shift
+    ;;
+  --skip-assets)
+    skip_assets=1
+    shift
+    ;;
+  --skip-db)
+    skip_db=1
+    shift
+    ;;
+  --force)
+    force=1
+    shift
+    ;;
+  *)
+    echo "unknown arg: $1" >&2
+    exit 1
+    ;;
+  esac
+done
+
+git rev-parse --is-inside-work-tree >/dev/null
+
+worktree_path=$(git rev-parse --show-toplevel)
+branch=$(git branch --show-current)
+main_repo=$(git worktree list --porcelain | awk '/^worktree /{print $2; exit}')
+
+if [[ "$worktree_path" == "$main_repo" ]]; then
+  echo "Refusing to set up the main worktree ($worktree_path)" >&2
+  exit 1
+fi
+
+cd "$worktree_path"
+
+# Ticket key: a LETTERS-DIGITS token at the start of a branch path segment --
+# anchoring keeps prose like "averaged-36525-day" out of the running. Branches
+# carry several prefixes (lab/, chore/LMCP-, feature/lmap-...), so keep the
+# project prefix in the database name; bare numbers collide across projects.
+infer_ticket() {
+  local -a found=()
+  local key
+  while read -r key; do
+    key=$(tr '[:upper:]' '[:lower:]' <<<"${key#/}")
+    [[ " ${found[*]:-} " == *" $key "* ]] || found+=("$key")
+  done < <(grep -oE '(^|/)[A-Za-z]{2,10}-[0-9]+' <<<"$branch" || true)
+
+  # Only trust an unambiguous match -- the wrong key silently points the app at
+  # someone else's database.
+  ((${#found[@]} == 1)) && printf '%s' "${found[0]}"
+  return 0
+}
+
+if [[ -z "$ticket" ]]; then
+  ticket=$(infer_ticket)
+fi
+
+if [[ -z "$ticket" && -z "$db_name" ]]; then
+  echo "Cannot infer a ticket from branch: $branch"
+  read -rp "Ticket key (e.g. LAB-408), or blank to skip: " ticket
+  ticket=$(tr '[:upper:]' '[:lower:]' <<<"$ticket")
+fi
+
+if [[ -z "$db_name" ]]; then
+  if [[ -n "$ticket" ]]; then
+    db_name="labmaster_development_${ticket//-/_}"
+  else
+    echo "No ticket and no --db: nothing to point DEV_DATABASE_NAME at" >&2
+    exit 1
+  fi
+fi
+
+# .env.local is gitignored, so a new worktree starts without the GitHub
+# Packages token that `yarn` needs. Carry the main worktree's copy over.
+env_file="$worktree_path/.env.local"
+if [[ ! -f "$env_file" ]]; then
+  if [[ -f "$main_repo/.env.local" ]]; then
+    cp "$main_repo/.env.local" "$env_file"
+    echo "Seeded .env.local from $main_repo"
+  else
+    echo "Warning: no .env.local in $main_repo -- yarn may fail to authenticate"
+    : >"$env_file"
+  fi
+fi
+
+# An unterminated last line would swallow the variable we append below.
+[[ -s "$env_file" && -n $(tail -c 1 "$env_file") ]] && printf '\n' >>"$env_file"
+
+if grep -q '^DEV_DATABASE_NAME=' "$env_file"; then
+  existing=$(grep '^DEV_DATABASE_NAME=' "$env_file" | tail -1 | cut -d= -f2-)
+  if [[ "$existing" != "$db_name" ]]; then
+    grep -v '^DEV_DATABASE_NAME=' "$env_file" >"$env_file.tmp"
+    mv "$env_file.tmp" "$env_file"
+    printf 'DEV_DATABASE_NAME=%s\n' "$db_name" >>"$env_file"
+    echo "DEV_DATABASE_NAME: $existing -> $db_name"
+  fi
+else
+  printf 'DEV_DATABASE_NAME=%s\n' "$db_name" >>"$env_file"
+fi
+
+export DEV_DATABASE_NAME="$db_name"
+# yarn reads npmAuthToken from the environment via .yarnrc.yml, and direnv has
+# not necessarily allowed this worktree's .envrc yet.
+set -a
+# shellcheck disable=SC1090
+source "$env_file"
+set +a
+
+if command -v direnv >/dev/null 2>&1 && [[ -f "$worktree_path/.envrc" ]]; then
+  direnv allow "$worktree_path"
+fi
+
+echo ""
+echo "Worktree: $worktree_path"
+echo "Branch:   $branch"
+echo "Database: $db_name"
+echo ""
+
+if ((!skip_assets)); then
+  echo "== Assets =="
+  yarn
+  yarn build
+  yarn build:css
+fi
+
+db_exists() {
+  psql -tAc "SELECT 1 FROM pg_database WHERE datname = '$1'" postgres 2>/dev/null | grep -q 1
+}
+
+if ((!skip_db)); then
+  echo ""
+  echo "== Database =="
+  if db_exists "$db_name" && ((!force)); then
+    read -rp "$db_name already exists; reload it? [y/N] " ok
+    if [[ ! "$ok" =~ ^[Yy]$ ]]; then
+      echo "Leaving $db_name as it is."
+      exit 0
+    fi
+  fi
+  bin/rails db:setup
+fi

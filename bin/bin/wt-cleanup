@@ -2,6 +2,7 @@
 # wt-cleanup — remove a merged feature worktree, branch, and Zellij session.
 # * Run from inside the worktree to be cleaned up.
 # * Options: --branch <name> (default: develop), --force (skip safety guards).
+# * Drops the worktree's own DEV_DATABASE_NAME database, if it has one.
 # * Will exit Zellij on completion
 set -euo pipefail
 
@@ -27,6 +28,51 @@ while [[ $# -gt 0 ]]; do
     ;;
   esac
 done
+
+# Resolved before anything cds: the detached child below re-runs this script.
+self=$0
+[[ $self == /* ]] || self=$PWD/$self
+
+# Kill the session, then tear the worktree down. Order matters: panes still
+# alive in the session write into the worktree, and a Rails server rebuilds
+# tmp/cache/bootsnap the moment git deletes it -- which is why cleanups used to
+# leave a directory containing nothing but tmp/ behind.
+finish() {
+  if [[ -n $session ]]; then
+    zellij delete-session --force "$session" || true
+    # delete-session returns before the panes' processes have all reaped.
+    for _ in {1..20}; do
+      zellij list-sessions -n 2>/dev/null | grep -q "^$session " || break
+      sleep 0.25
+    done
+  fi
+
+  cd "$main_repo"
+  local flags=()
+  ((force)) && flags=(--force)
+  git worktree remove "${flags[@]}" "$worktree_path"
+  # A pane that outlived the kill can still have recreated an ignored path;
+  # git leaves the directory in place when it does.
+  [[ -d $worktree_path ]] && rm -rf "$worktree_path"
+  git worktree prune
+  git branch -D "$branch"
+  [[ -n $database ]] && dropdb --if-exists "$database"
+  return 0
+}
+
+# Phase two, re-entered as a detached child so it outlives the session it
+# kills. Everything it needs arrives through the environment -- by then the
+# worktree it was launched from is on its way out.
+if [[ -n ${WT_CLEANUP_FINISH:-} ]]; then
+  worktree_path=$WT_CLEANUP_WORKTREE
+  branch=$WT_CLEANUP_BRANCH
+  main_repo=$WT_CLEANUP_MAIN
+  session=$WT_CLEANUP_SESSION
+  database=$WT_CLEANUP_DATABASE
+  force=$WT_CLEANUP_FORCE
+  finish
+  exit 0
+fi
 
 git rev-parse --is-inside-work-tree >/dev/null
 
@@ -71,10 +117,26 @@ current_session() {
   return 0
 }
 
+# The per-worktree database wt-setup created, if any. Read it before the
+# worktree is removed -- .env.local goes with it.
+worktree_database() {
+  local env_file=$1/.env.local name
+  [[ -f $env_file ]] || return 0
+  name=$(grep '^DEV_DATABASE_NAME=' "$env_file" | tail -1 | cut -d= -f2-)
+  name=${name%\"}
+  name=${name#\"}
+  # Never offer to drop the shared development database.
+  [[ -z $name || $name == labmaster_development ]] && return 0
+  psql -tAc "SELECT 1 FROM pg_database WHERE datname = '$name'" postgres 2>/dev/null |
+    grep -q 1 || return 0
+  printf '%s' "$name"
+}
+
 worktree_path=$(git rev-parse --show-toplevel)
 branch=$(git branch --show-current)
 session=$(current_session)
 main_repo=$(git worktree list --porcelain | awk '/^worktree /{print $2; exit}')
+database=$(worktree_database "$worktree_path")
 
 if [[ "$worktree_path" == "$main_repo" ]]; then
   echo "Refusing to clean the main worktree ($worktree_path)" >&2
@@ -108,14 +170,29 @@ echo ""
 echo "Worktree: $worktree_path"
 echo "Branch:   $branch"
 [[ -n "$session" ]] && echo "Session:  $session"
+[[ -n "$database" ]] && echo "Database: $database (will be dropped)"
 echo ""
 
 read -rp "Proceed? [y/N] " ok
 [[ "$ok" =~ ^[Yy]$ ]] || exit 0
 
-cd "$main_repo"
-worktree_flags=()
-(( force )) && worktree_flags=(--force)
-git worktree remove "${worktree_flags[@]}" "$worktree_path"
-git branch -D "$branch"
-[[ -n "$session" ]] && zellij delete-session --force "$session"
+if [[ -z "$session" ]]; then
+  # Nothing is going to write the worktree back into place; stay in the
+  # foreground so the output lands on screen.
+  finish
+  exit 0
+fi
+
+log="${TMPDIR:-/tmp}/wt-cleanup-$(basename "$worktree_path").log"
+echo "Closing $session; cleanup continues in the background."
+echo "Log: $log"
+
+WT_CLEANUP_FINISH=1 \
+  WT_CLEANUP_WORKTREE="$worktree_path" \
+  WT_CLEANUP_BRANCH="$branch" \
+  WT_CLEANUP_MAIN="$main_repo" \
+  WT_CLEANUP_SESSION="$session" \
+  WT_CLEANUP_DATABASE="$database" \
+  WT_CLEANUP_FORCE="$force" \
+  nohup "$self" >"$log" 2>&1 &
+disown
