@@ -7,6 +7,10 @@
 #   2. Create dotfiles/zsh/.zshrc.<name> for any machine-specific config
 #   3. Run `stow zsh` from ~/dotfiles
 
+# On macOS, XDG-aware tools default to ~/Library/Application Support unless this
+# is set. Setting it keeps their configs in ~/.config so they can be stowed.
+export XDG_CONFIG_HOME="$HOME/.config"
+
 eval "$(rbenv init - zsh)"
 
 
