@@ -2,12 +2,15 @@
 # wt-setup — prepare a freshly branched Rails worktree for development.
 # * Run from inside the new worktree.
 # * Seeds .env.local from the main worktree, pins DEV_DATABASE_NAME to a
-#   per-ticket database, builds assets, and bootstraps the database.
-# * Options: --ticket <key>, --db <name>, --skip-assets, --skip-db, --force.
+#   per-ticket database and PORT to a free port, builds assets, and bootstraps
+#   the database.
+# * Options: --ticket <key>, --db <name>, --port <n>, --skip-assets, --skip-db,
+#   --force.
 set -euo pipefail
 
 ticket=
 db_name=
+port=
 skip_assets=0
 skip_db=0
 force=0
@@ -27,6 +30,14 @@ while [[ $# -gt 0 ]]; do
     ;;
   --db=*)
     db_name=${1#*=}
+    shift
+    ;;
+  --port)
+    port=$2
+    shift 2
+    ;;
+  --port=*)
+    port=${1#*=}
     shift
     ;;
   --skip-assets)
@@ -98,6 +109,46 @@ if [[ -z "$db_name" ]]; then
   fi
 fi
 
+# Port: .envrc runs `dotenv_if_exists .env.local`, so PORT set there reaches
+# config/puma.rb (ENV.fetch("PORT", 3000)) and Procfile.dev alike -- both
+# `bin/rails s` and `bin/dev` land on it without a flag.
+#
+# Seed from a hash of the database name so a worktree keeps the same port
+# across re-runs (bookmarks and OAuth callbacks stay valid), then walk forward
+# until a port is neither listening nor already claimed by another worktree.
+port_in_use() {
+  (exec 3<>"/dev/tcp/127.0.0.1/$1") 2>/dev/null
+}
+
+# Ports other worktrees have taken. A worktree whose server is stopped still
+# owns its port -- an unclaimed-looking port handed out twice collides the next
+# time both are running.
+claimed_ports() {
+  local wt env_file
+  while read -r wt; do
+    [[ $wt == "$worktree_path" ]] && continue
+    env_file="$wt/.env.local"
+    [[ -f $env_file ]] || continue
+    (grep '^PORT=' "$env_file" || true) | tail -1 | cut -d= -f2- | tr -d '"'
+  done < <(git worktree list --porcelain | awk '/^worktree /{print $2}')
+}
+
+# 3000 is left to the main worktree; 3001-3099 is the worktree pool.
+pick_port() {
+  local base candidate i claimed
+  claimed=" $(claimed_ports | tr '\n' ' ') "
+  base=$(cksum <<<"$db_name" | cut -d' ' -f1)
+  for ((i = 0; i < 99; i++)); do
+    candidate=$((3001 + (base + i) % 99))
+    [[ $claimed == *" $candidate "* ]] && continue
+    port_in_use "$candidate" && continue
+    printf '%s' "$candidate"
+    return 0
+  done
+  echo "No free port in 3001-3099" >&2
+  return 1
+}
+
 # .env.local is gitignored, so a new worktree starts without the GitHub
 # Packages token that `yarn` needs. Carry the main worktree's copy over.
 env_file="$worktree_path/.env.local"
@@ -114,19 +165,32 @@ fi
 # An unterminated last line would swallow the variable we append below.
 [[ -s "$env_file" && -n $(tail -c 1 "$env_file") ]] && printf '\n' >>"$env_file"
 
-if grep -q '^DEV_DATABASE_NAME=' "$env_file"; then
-  existing=$(grep '^DEV_DATABASE_NAME=' "$env_file" | tail -1 | cut -d= -f2-)
-  if [[ "$existing" != "$db_name" ]]; then
-    grep -v '^DEV_DATABASE_NAME=' "$env_file" >"$env_file.tmp"
+upsert_env() {
+  local key=$1 value=$2 existing
+  if grep -q "^$key=" "$env_file"; then
+    existing=$(grep "^$key=" "$env_file" | tail -1 | cut -d= -f2-)
+    [[ "$existing" == "$value" ]] && return 0
+    grep -v "^$key=" "$env_file" >"$env_file.tmp"
     mv "$env_file.tmp" "$env_file"
-    printf 'DEV_DATABASE_NAME=%s\n' "$db_name" >>"$env_file"
-    echo "DEV_DATABASE_NAME: $existing -> $db_name"
+    printf '%s=%s\n' "$key" "$value" >>"$env_file"
+    echo "$key: $existing -> $value"
+    return 0
   fi
-else
-  printf 'DEV_DATABASE_NAME=%s\n' "$db_name" >>"$env_file"
+  printf '%s=%s\n' "$key" "$value" >>"$env_file"
+}
+
+upsert_env DEV_DATABASE_NAME "$db_name"
+
+# An already-assigned port is this worktree's own; re-running setup should not
+# move a server that tabs and callbacks are already pointed at.
+if [[ -z "$port" ]]; then
+  port=$( (grep '^PORT=' "$env_file" || true) | tail -1 | cut -d= -f2- | tr -d '"')
 fi
+[[ -z "$port" ]] && port=$(pick_port)
+upsert_env PORT "$port"
 
 export DEV_DATABASE_NAME="$db_name"
+export PORT="$port"
 # yarn reads npmAuthToken from the environment via .yarnrc.yml, and direnv has
 # not necessarily allowed this worktree's .envrc yet.
 set -a
@@ -142,6 +206,7 @@ echo ""
 echo "Worktree: $worktree_path"
 echo "Branch:   $branch"
 echo "Database: $db_name"
+echo "Port:     $port (http://localhost:$port)"
 echo ""
 
 if ((!skip_assets)); then
