@@ -1,15 +1,19 @@
 #!/usr/bin/env bash
 # wt-setup — prepare a freshly branched Rails worktree for development.
 # * Run from inside the new worktree.
-# * Seeds .env.local from the main worktree, pins DEV_DATABASE_NAME to a
-#   per-ticket database and PORT to a free port, builds assets, and bootstraps
-#   the database.
-# * Options: --ticket <key>, --db <name>, --port <n>, --skip-assets, --skip-db,
-#   --force.
+# * Seeds .env.local from the main worktree, pins DEV_DATABASE_NAME and
+#   TEST_DATABASE_NAME to per-ticket databases and PORT to a free port, builds
+#   assets, and bootstraps both databases.
+# * TEST_DATABASE_NAME also goes to .env.test.local, the only one of the two
+#   dotenv-rails reads under RAILS_ENV=test.
+# * Regenerates .rspec-local via `agentmon init-rspec` when agentmon is on PATH.
+# * Options: --ticket <key>, --db <name>, --test-db <name>, --port <n>,
+#   --skip-assets, --skip-db, --force.
 set -euo pipefail
 
 ticket=
 db_name=
+test_db_name=
 port=
 skip_assets=0
 skip_db=0
@@ -30,6 +34,14 @@ while [[ $# -gt 0 ]]; do
     ;;
   --db=*)
     db_name=${1#*=}
+    shift
+    ;;
+  --test-db)
+    test_db_name=$2
+    shift 2
+    ;;
+  --test-db=*)
+    test_db_name=${1#*=}
     shift
     ;;
   --port)
@@ -109,6 +121,20 @@ if [[ -z "$db_name" ]]; then
   fi
 fi
 
+# config/database.yml reads TEST_DATABASE_NAME and appends TEST_ENV_NUMBER to
+# it, so a per-worktree name keeps parallel_tests' numbered databases
+# (labmaster_test_lab_4082, ...3) inside this worktree's namespace too.
+#
+# Mirror whatever the development name ended up as -- a hand-passed --db should
+# not silently leave the test suite on the shared labmaster_test.
+if [[ -z "$test_db_name" ]]; then
+  if [[ "$db_name" == *_development* ]]; then
+    test_db_name=${db_name/_development/_test}
+  else
+    test_db_name="${db_name}_test"
+  fi
+fi
+
 # Port: .envrc runs `dotenv_if_exists .env.local`, so PORT set there reaches
 # config/puma.rb (ENV.fetch("PORT", 3000)) and Procfile.dev alike -- both
 # `bin/rails s` and `bin/dev` land on it without a flag.
@@ -162,24 +188,44 @@ if [[ ! -f "$env_file" ]]; then
   fi
 fi
 
-# An unterminated last line would swallow the variable we append below.
-[[ -s "$env_file" && -n $(tail -c 1 "$env_file") ]] && printf '\n' >>"$env_file"
+# dotenv-rails skips .env.local when Rails.env is test -- it loads
+# .env.test.local, .env.test, .env and nothing else. TEST_DATABASE_NAME in
+# .env.local therefore only reaches RSpec by way of direnv exporting it into
+# the shell, so a runner started outside a direnv-allowed shell quietly lands
+# on the shared labmaster_test. .env.test is committed; .env.test.local is
+# gitignored and loaded first, so that is where the per-worktree value goes.
+test_env_file="$worktree_path/.env.test.local"
+[[ -f "$test_env_file" ]] || : >"$test_env_file"
 
-upsert_env() {
-  local key=$1 value=$2 existing
-  if grep -q "^$key=" "$env_file"; then
-    existing=$(grep "^$key=" "$env_file" | tail -1 | cut -d= -f2-)
-    [[ "$existing" == "$value" ]] && return 0
-    grep -v "^$key=" "$env_file" >"$env_file.tmp"
-    mv "$env_file.tmp" "$env_file"
-    printf '%s=%s\n' "$key" "$value" >>"$env_file"
-    echo "$key: $existing -> $value"
-    return 0
+# An unterminated last line would swallow the variable we append below.
+ensure_trailing_newline() {
+  if [[ -s "$1" && -n $(tail -c 1 "$1") ]]; then
+    printf '\n' >>"$1"
   fi
-  printf '%s=%s\n' "$key" "$value" >>"$env_file"
 }
 
-upsert_env DEV_DATABASE_NAME "$db_name"
+ensure_trailing_newline "$env_file"
+ensure_trailing_newline "$test_env_file"
+
+upsert_env() {
+  local file=$1 key=$2 value=$3 existing
+  if grep -q "^$key=" "$file"; then
+    existing=$(grep "^$key=" "$file" | tail -1 | cut -d= -f2-)
+    [[ "$existing" == "$value" ]] && return 0
+    # A file holding nothing but this key leaves grep -v empty and exiting 1,
+    # which set -e would take for a failure.
+    grep -v "^$key=" "$file" >"$file.tmp" || true
+    mv "$file.tmp" "$file"
+    printf '%s=%s\n' "$key" "$value" >>"$file"
+    echo "$(basename "$file") $key: $existing -> $value"
+    return 0
+  fi
+  printf '%s=%s\n' "$key" "$value" >>"$file"
+}
+
+upsert_env "$env_file" DEV_DATABASE_NAME "$db_name"
+upsert_env "$env_file" TEST_DATABASE_NAME "$test_db_name"
+upsert_env "$test_env_file" TEST_DATABASE_NAME "$test_db_name"
 
 # An already-assigned port is this worktree's own; re-running setup should not
 # move a server that tabs and callbacks are already pointed at.
@@ -187,9 +233,10 @@ if [[ -z "$port" ]]; then
   port=$( (grep '^PORT=' "$env_file" || true) | tail -1 | cut -d= -f2- | tr -d '"')
 fi
 [[ -z "$port" ]] && port=$(pick_port)
-upsert_env PORT "$port"
+upsert_env "$env_file" PORT "$port"
 
 export DEV_DATABASE_NAME="$db_name"
+export TEST_DATABASE_NAME="$test_db_name"
 export PORT="$port"
 # yarn reads npmAuthToken from the environment via .yarnrc.yml, and direnv has
 # not necessarily allowed this worktree's .envrc yet.
@@ -202,10 +249,21 @@ if command -v direnv >/dev/null 2>&1 && [[ -f "$worktree_path/.envrc" ]]; then
   direnv allow "$worktree_path"
 fi
 
+# .rspec-local is gitignored, so a fresh worktree runs specs without the
+# agent-monitor formatter until it is written. The require path it emits is
+# absolute and points into the installed agentmon's share directory, so
+# re-running is also how it stays current across upgrades. Not everyone has
+# agentmon, and a broken formatter should not sink the whole setup.
+if command -v agentmon >/dev/null 2>&1; then
+  agentmon init-rspec ||
+    echo "Warning: agentmon init-rspec failed -- specs will run without the agent-monitor formatter"
+fi
+
 echo ""
 echo "Worktree: $worktree_path"
 echo "Branch:   $branch"
 echo "Database: $db_name"
+echo "Test DB:  $test_db_name"
 echo "Port:     $port (http://localhost:$port)"
 echo ""
 
@@ -223,12 +281,27 @@ db_exists() {
 if ((!skip_db)); then
   echo ""
   echo "== Database =="
+  reload_dev=1
   if db_exists "$db_name" && ((!force)); then
     read -rp "$db_name already exists; reload it? [y/N] " ok
     if [[ ! "$ok" =~ ^[Yy]$ ]]; then
       echo "Leaving $db_name as it is."
-      exit 0
+      reload_dev=0
     fi
   fi
-  bin/rails db:setup
+  if ((reload_dev)); then
+    bin/rails db:setup
+  fi
+
+  # The test database holds nothing worth keeping, so it needs no prompt -- but
+  # it does need to exist: maintain_test_schema! reaches for internal metadata
+  # before it considers reloading, so a missing database surfaces as
+  # NoDatabaseError on the first spec rather than as a schema load.
+  echo ""
+  echo "Preparing $test_db_name"
+  bin/rails db:test:prepare
+
+  # parallel_tests' numbered databases are per-worktree now, so each worktree
+  # needs its own copies; left to the suite they appear one slow spec run late.
+  echo "For parallel specs: bundle exec rake parallel:setup"
 fi
