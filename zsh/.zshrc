@@ -17,6 +17,9 @@ eval "$(rbenv init - zsh)"
 # Autocompletion
 # autoload -Uz compinit && compinit
 
+# Own completions ahead of Homebrew's, so overrides win. compinit runs in oh-my-zsh.
+fpath=($HOME/.zsh/completions $fpath)
+
 
 # From Oh My Zsh:
 

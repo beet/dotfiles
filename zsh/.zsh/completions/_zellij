@@ -1,0 +1,31 @@
+#compdef zellij
+
+# Zellij ships a clap-generated completion in which every session name falls through
+# to _default. This wraps it: session names come from `zellij list-sessions`, and
+# everything else is delegated to the upstream _zellij found later in $fpath.
+
+_zellij_sessions() {
+  local -a sessions
+  sessions=("${(f)$(zellij list-sessions --short --no-formatting 2>/dev/null)}")
+  _describe -t zellij-sessions 'session' sessions
+}
+
+if [[ $words[2] == (attach|kill-session|delete-session) ]] && (( CURRENT == 3 )); then
+  _zellij_sessions
+  return
+fi
+
+if (( ! $+functions[_zellij_upstream] )); then
+  local self=${${(%):-%x}:A} candidate
+  for candidate in ${^fpath}/_zellij(N); do
+    [[ ${candidate:A} == $self ]] && continue
+    unfunction _zellij                    # autoload is a no-op on a defined function
+    autoload -Uz +X $candidate
+    functions[_zellij_upstream]=$functions[_zellij]
+    unfunction _zellij
+    autoload -Uz $self                    # put this wrapper back for the next completion
+    break
+  done
+fi
+
+(( $+functions[_zellij_upstream] )) && _zellij_upstream "$@"
