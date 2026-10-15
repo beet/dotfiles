@@ -2,14 +2,10 @@
 #
 # Machine-specific config lives in .zshrc.<hostname> (e.g. .zshrc.mbp-creditorwatch),
 # also in this repo. The active machine is identified by $DOTFILES_HOST, set in
-# ~/.zshenv (untracked). To set up a new machine:
-#   1. Add `export DOTFILES_HOST="<name>"` to ~/.zshenv
+# ~/.zshenv.local (untracked). To set up a new machine:
+#   1. Add `export DOTFILES_HOST="<name>"` to ~/.zshenv.local
 #   2. Create dotfiles/zsh/.zshrc.<name> for any machine-specific config
 #   3. Run `stow zsh` from ~/dotfiles
-
-# On macOS, XDG-aware tools default to ~/Library/Application Support unless this
-# is set. Setting it keeps their configs in ~/.config so they can be stowed.
-export XDG_CONFIG_HOME="$HOME/.config"
 
 eval "$(rbenv init - zsh)"
 
@@ -99,8 +95,8 @@ plugins=(
   git
 )
 
-# Homebrew prefix differs per machine (/opt/homebrew, /usr/local, linuxbrew)
-BREW_PREFIX="$(brew --prefix)"
+# Set in .zshenv, which unlike this file also runs for non-login shells.
+BREW_PREFIX="$HOMEBREW_PREFIX"
 
 # https://github.com/jeffreytse/zsh-vi-mode
 source $BREW_PREFIX/opt/zsh-vi-mode/share/zsh-vi-mode/zsh-vi-mode.plugin.zsh

@@ -21,23 +21,27 @@ Pretty much everything else is old guff prior to discovering [GNU Stow](https://
 
 The base ZSH config in `zsh/.zshrc` defines the core setup, plugins, etc. and then pulls in machine-specific config at the end, allowing multiple machines to use the same basic settings, while also keeping their own customisations segregated but still under version control if needed.
 
-Each machine keeps an untracked `~/.zshenv` file which defines its host name, and corresponds to a custom config that may or may not be under version control.
+`zsh/.zshenv` is stowed too. Zsh sources it for *every* shell, login or not, so it is where Homebrew and `XDG_CONFIG_HOME` are set up: `.zprofile` runs for login shells only, which leaves zellij panes, `nvim :terminal` and anything launched from the GUI without them.
+
+`zsh/.zprofile` then does one job on top of that: macOS `/etc/zprofile` runs `path_helper`, which hoists the system paths back above Homebrew's, so the order has to be re-asserted afterwards.
+
+Each machine keeps an untracked `~/.zshenv.local` file, sourced from the end of `zsh/.zshenv`, which defines its host name and holds anything with a secret in it. It corresponds to a custom config that may or may not be under version control.
 
 Assuming the repo is checked out in `~/dotfiles/`:
 
 ### Home machine
 
-1. Add `export DOTFILES_HOST="macbook_pro_home"` to `~/.zshenv`
+1. Add `export DOTFILES_HOST="macbook_pro_home"` to `~/.zshenv.local`
 2. Create `~dotfiles/zsh/.zshrc.macbook_pro_home` for any machine-specific config
 3. Run `stow zsh` from `~/dotfiles`
 
 ### Work machine
 
-1. Add `export DOTFILES_HOST="macbook_pro_work"` to `~/.zshenv`
+1. Add `export DOTFILES_HOST="macbook_pro_work"` to `~/.zshenv.local`
 2. Create `~dotfiles/zsh/.zshrc.macbook_pro_work` for any machine-specific config
 3. Run `stow zsh` from `~/dotfiles`
 
 ### Oh My Zsh
 
-When installing [Oh My Zsh](https://ohmyz.sh/), it will create `~/.zshrc`. If that was done before stowing the ZSH config, it may need to be deleted/renamed before running `stow zsh` from the dotfiles repo.
+When installing [Oh My Zsh](https://ohmyz.sh/), it will create `~/.zshrc`. If that was done before stowing the ZSH config, it may need to be deleted/renamed before running `stow zsh` from the dotfiles repo. The same goes for any pre-existing `~/.zshenv` — move its contents to `~/.zshenv.local` first.
 
