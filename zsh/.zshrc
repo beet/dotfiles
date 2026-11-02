@@ -131,6 +131,9 @@ export ZELLIJ_SOCKET_DIR="/tmp/zellij-$UID"
 # alias zshconfig="mate ~/.zshrc"
 # alias ohmyzsh="mate ~/.oh-my-zsh"
 
+alias zj="zellij"
+compdef zj=zellij
+
 source $BREW_PREFIX/share/zsh-autosuggestions/zsh-autosuggestions.zsh
 
 # Absorb terminal focus-in/out reports (ESC[I / ESC[O) so they don't leak
