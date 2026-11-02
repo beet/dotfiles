@@ -41,6 +41,18 @@ longer than both. Do not match a file's density just because it is what you are 
 A class-level purpose comment — where a project asks for one, as LabMaster does — is the standing
 exception, and it is one or two lines too.
 
+# Method definitions
+
+**Never write an endless method definition.** `def code = @code` is not shorter in any way that
+helps a reader: it reads as an assignment until the eye reaches the `def`, it cannot grow a second
+line without being rewritten, and it hides the body from every `def`/`end` fold and jump. Write
+`def ... end` even for a one-expression body, and even for a bare attribute or delegation.
+
+**The surrounding code is not permission.** Even if many pre-existing methods
+in the repo follow that pattern, matching the local idiom is exactly how the
+habit spreads. Leave the existing ones alone — rewriting them is churn, and a
+diff that is half style is a diff nobody reads — but do not add another.
+
 # Running specs
 
 **A comment-only, whitespace-only or doc-only edit gets no verification run.** No specs, no build,
