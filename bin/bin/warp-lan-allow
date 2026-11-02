@@ -1,0 +1,15 @@
+#!/usr/bin/env bash
+# warp-lan-allow — re-apply Cloudflare WARP's local-network override when it lapses.
+# It "ends after the next reconnection", and the split-tunnel list is Zero-Trust managed,
+# so `tunnel ip add-range 192.168.0.0/24` reports Success and is ignored.
+set -euo pipefail
+
+warp=/usr/local/bin/warp-cli
+[[ -x $warp ]] || exit 0
+
+"$warp" --accept-tos status 2>/dev/null | grep -q Connected || exit 0
+
+if ! "$warp" --accept-tos override local-network show 2>/dev/null | grep -q "ends after"; then
+  "$warp" --accept-tos override local-network allow >/dev/null 2>&1 || exit 0
+  printf '%s re-applied local-network override\n' "$(date +%FT%T)"
+fi
