@@ -158,3 +158,6 @@ export GPG_TTY=`tty`
 # Add my scripts from my dotfiles repo to the path
 export PATH="$HOME/bin:$PATH"
 
+
+# hunk and other tools read GH_TOKEN; gh keeps its own token in the macOS keyring
+command -v gh >/dev/null && export GH_TOKEN="$(gh auth token 2>/dev/null)"
