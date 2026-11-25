@@ -84,3 +84,14 @@ fix and watch it go red; if it stays green it is not a test.
 checked is worse than no comment: it reads as authoritative and stops the next person checking.
 "X is often the case", "this can't happen", "the convention here is Y" — each is a thing to run,
 grep, or date against git history. If it cannot be checked, say so or leave it out.
+
+# Committing
+
+**Implementing a plan's tasks stops before the commit.** Working through a task list — an OpenSpec
+change under `/opsx:apply`, or any other agreed plan — ends with the work in the tree, verified,
+and reported. Do not `git commit`, and do not stage: the review happens on an unstaged diff, and a
+commit made before that review is one the reviewer has to undo rather than ask for.
+
+**A task that says to commit is not that permission.** Leave it unticked and say so; it is the one
+step the person takes themselves. Commit only when they ask in the moment — "commit this", "commit
+and push" — and that permission covers the commit they asked for, not the next one.
